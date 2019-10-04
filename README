@@ -1,0 +1,46 @@
+This is the code used in "Branch-and-Bound for Bi-objective Integer Programming" by Sophie N. Parragh and Fabien Tricoire (2019) which can be found at https://doi.org/10.1287/ijoc.2018.0856
+
+The code relies on Gurobi. For this reason:
+- a working install of Gurobi is required
+- The code is in Python 2
+
+Run './main.py -h' to see a list of command line parameters.
+If this does not work, run 'gurobi.sh ./main.py -h'
+
+Test instances can be found at https://www.jku.at/institut-fuer-produktions-und-logistikmanagement/forschung/resources/
+
+Examples of how to call the program:
+
+1) Solve a UBOFLP instance with BIOBAB:
+./main.py -pt uboflp -i instances/uboflp/021-nSamples=10.txt
+
+2) Solve a SSUFLP instance with BIOBAB using MIPs instead of LPS:
+./main.py -pt ssuflp -i instances/ssuflp/10_20_1.txt -nlr
+
+3) Solve a UBOFLP instance with epsilon-constraint:
+./main.py -pt uboflp -i instances/uboflp/021-nSamples=10.txt -a epsilon -nlr
+
+4) Solve a UBOFLP instance with epsilon-constraint, starting with obj. 2:
+./main.py -pt uboflp -i instances/uboflp/021-nSamples=10.txt -a epsilon -nlr -efo 2
+
+5) Solve a SSUFLP instance with bi-directional epsilon-constraint:
+./main.py -pt ssuflp -i instances/ssuflp/10_20_1.txt -a bdepsilon -nlr
+
+6) Solve a SSUFLP instance with balanced-box:
+./main.py -pt ssuflp -i instances/ssuflp/10_20_1.txt -a balancedbox -nlr
+
+7) Solve a SSUFLP instance with BIOBAB, for at most 1 minute:
+./main.py -pt ssuflp -i instances/ssuflp/10_20_1.txt -tl 60
+
+--------------------------------------------------------------------------------
+Things that need to be implemented in order to use biobab for your own problem:
+
+- a class that derives basicdata.BasicData, which encapsulates input data. z1Epsilon, z2Epsilon, boundRight() and boundTop() should be defined.
+
+- a class that derives basiclp.BasicLP, which encapsulates the mathematical model used to solve the model. z1Expr, z2Expr, wsEpsilon, integerVars must be defined.
+
+Things that can be implemented as well:
+
+- a class that derives integersolution.Integersolution, which encapsulates data on integer solutions encountered during the search. The basic version stores non-zero variables and their values. Overloading storeSolution() will allow you to store solutions to a different format. Redefining the 'digits' class attribute allows to tune rounding when storing objective values.
+
+If the user-defined classes are named probleminstance.py, problemmodel.py and problemsolution.py (optional) then there is no need to modify any source file from the biobab package: just use '-pt problem' on the command line to automatically use the classes defined in these files. See example files: 'uboflpinstance.py' and 'uboflpmodel.py'. Alternately, one can also put all required classes into a single file called problemdata.py, see example file 'ssuflpdata.py'.
