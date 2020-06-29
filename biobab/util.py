@@ -7,10 +7,11 @@ import types
 
 import params
 import grbvalues
+from functools import reduce
 
 # timestamp function
 def TS():
-    t = time.clock()
+    t = time.process_time()
     hours = int( t / 3600 )
     t -= hours * 3600
     minutes = int( t / 60 )
@@ -65,7 +66,7 @@ class TimeLimitReachedException(Exception):
     pass
 
 def isTimeUp(grbModel=None, raiseException=True):
-    if time.clock() > ticksAtStart + params.timeLimit:
+    if time.process_time() > ticksAtStart + params.timeLimit:
         if raiseException:
             raise TimeLimitReachedException( \
                     '/!\\ Time limit reached: ' + str(params.timeLimit) + 's' )
@@ -76,20 +77,20 @@ def isTimeUp(grbModel=None, raiseException=True):
 
 def remainingTime():
     isTimeUp()
-    return ticksAtStart + params.timeLimit - time.clock()
+    return ticksAtStart + params.timeLimit - time.process_time()
 
 def dumpParams():
-    print '------------------------------------------------------------------'
-    print 'Parameters:'
+    print('------------------------------------------------------------------')
+    print('Parameters:')
     for p in [x for x in dir(params) if not x.startswith('__') ]:
         try:
-            print '\t', p, '=', eval('params.' + p)
+            print('\t', p, '=', eval('params.' + p))
         except Exception as e:
-            print
-    print '------------------------------------------------------------------'
+            print()
+    print('------------------------------------------------------------------')
 
 # high enough value
-infinity = float('inf')#sys.maxint
+infinity = sys.maxsize#float('inf')#sys.maxint
 
 def loadProblemClasses(problemName):
     # try from a single file first, then from multiple files
@@ -100,61 +101,61 @@ def loadProblemClasses(problemName):
 # return True if successful, False otherwise
 def loadProblemClassesFromMultipleFiles(problemName):
     import basicdata, basiclp, integersolution
-    print 'Attempting to load data classes from multiple files'
+    print('Attempting to load data classes from multiple files')
     try:
         instanceClassLoaded, modelClassLoaded = False, False
         instanceModule = __import__(problemName + 'instance')
         modelModule = __import__(problemName + 'model')
         for name in dir(instanceModule):
             item = instanceModule.__getattribute__(name)
-            if type(item) is types.ClassType and \
+            if type(item) is type and \
                issubclass(item, basicdata.BasicData):
                 params.instanceClass = item
-                print 'instance class:', item
+                print('instance class:', item)
         for name in dir(modelModule):
             item = modelModule.__getattribute__(name)
-            if type(item) is types.ClassType and \
+            if type(item) is type and \
                issubclass(item, basiclp.BasicLP):
                 params.modelClass = item
-                print 'model class:', item
+                print('model class:', item)
         try:
             solutionModule = __import__(problemName + 'solution')
             for name in dir(solutionModule):
                 item = solutionModule.__getattribute__(name)
-                if type(item) is types.ClassType and \
+                if type(item) is type and \
                    issubclass(item, integersolution.IntegerSolution):
                     params.solutionClass = item
-                    print 'solution class:', item
+                    print('solution class:', item)
         except ImportError:
             pass
         return instanceClassLoaded and modelClassLoaded
     except Exception as e:
-        print e
+        print(e)
         return False        
 
 # try to load all data classes from a single file
 # return True if successful, False otherwise
 def loadProblemClassesFromSingleFile(problemName):
     import basicdata, basiclp, integersolution
-    print 'Attempting to load data classes from a single file'
+    print('Attempting to load data classes from a single file')
     try:
         dataModule = __import__(problemName + 'data')
         instanceClassLoaded, modelClassLoaded = False, False
-        print 'Loading all data classes from', problemName + 'data.py'
+        print('Loading all data classes from', problemName + 'data.py')
         for name in dir(dataModule):
             item = dataModule.__getattribute__(name)
-            if type(item) is types.ClassType and \
+            if type(item) is type and \
                issubclass(item, basicdata.BasicData):
                 params.instanceClass = item
                 instanceClassLoaded = True
-            elif type(item) is types.ClassType and \
+            elif type(item) is type and \
                  issubclass(item, basiclp.BasicLP):
                 params.modelClass = item
                 modelClassLoaded = True
-            elif type(item) is types.ClassType and \
+            elif type(item) is type and \
                  issubclass(item, integersolution.IntegerSolution):
                 params.solutionClass = item
         return instanceClassLoaded and modelClassLoaded
     except Exception as e:
-        print 'Failed to load data classes from single file:', e
+        print('Failed to load data classes from single file:', e)
         return False

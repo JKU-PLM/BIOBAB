@@ -24,7 +24,7 @@ class Queue:
         elif self.mode == 'best':
             return heapq.heappop(self.queue)[1]
         else:
-            print 'unknown processing mode:', self.mode
+            print('unknown processing mode:', self.mode)
 
     def __len__(self):
         return len(self.queue)

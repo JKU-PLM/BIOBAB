@@ -44,3 +44,8 @@ Things that can be implemented as well:
 - a class that derives integersolution.Integersolution, which encapsulates data on integer solutions encountered during the search. The basic version stores non-zero variables and their values. Overloading storeSolution() will allow you to store solutions to a different format. Redefining the 'digits' class attribute allows to tune rounding when storing objective values.
 
 If the user-defined classes are named probleminstance.py, problemmodel.py and problemsolution.py (optional) then there is no need to modify any source file from the biobab package: just use '-pt problem' on the command line to automatically use the classes defined in these files. See example files: 'uboflpinstance.py' and 'uboflpmodel.py'. Alternately, one can also put all required classes into a single file called problemdata.py, see example file 'ssuflpdata.py'.
+
+--------------------------------------------------------------------------------
+A word on the performance and precision of Gurobi.
+
+The BIOBAB code was originally developed using Gurobi 6.5. It has not been tested using Gurobi 7.x. However, starting from version 8, the same code has been producing different results on the UBOFLP instances. In order to produce the same results as previously, it is now required to set parameter NumericFocus to 3. This is now done in uboflpmodel.py. Additionally, with UBOFLP instances the CPU times are now larger than with older versions, regardless of whether NumericFocus is set. Ultimately, we have no control over the evolution of commercial software and the ways it invalidates our code.

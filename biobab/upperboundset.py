@@ -57,18 +57,17 @@ class UpperBoundSet:
         
 
     def storePoints(self, fName):
-        f = file(fName, 'w')
-        for s in self.solutions:
-            f.write(str(s.z1) + '\t' + str(s.z2) + '\n')
-        f.close()
-        print util.TS(), '\tStored UB set to', fName,
-        print '(' + str(len(self.solutions)) + ' solutions)'
+        with open(fName, 'w') as f:
+            for s in self.solutions:
+                f.write(str(s.z1) + '\t' + str(s.z2) + '\n')
+        print(util.TS(), '\tStored UB set to', fName, end=' ')
+        print('(' + str(len(self.solutions)) + ' solutions)')
                 
     def storeSolutions(self, baseName):
         for i, s in enumerate(self.solutions):
             s.storeSolution(baseName)
-        print util.TS(), '\tStored', len(self.solutions),
-        print 'solutions with basename:', baseName
+        print(util.TS(), '\tStored', len(self.solutions), end=' ')
+        print('solutions with basename:', baseName)
         
     def __repr__(self):
         return str(self.solutions)

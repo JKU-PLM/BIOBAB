@@ -27,20 +27,20 @@ class Bounder:
             f.write('originalLB = ' + lb.vizOut('lbColour') + '\n\n')
             f.write('UB = ' + ub.vizOut('ubColour') + '\n\n')
         if params.verbosity > 2:
-            print 'LB before:', lb
+            print('LB before:', lb)
         lb.filter(ub)
         if params.verbosity > 2:
-            print 'LB after:', lb
+            print('LB after:', lb)
         if params.debug:
             f.write('filteredLB = ' + lb.vizOut('newLbColour') + '\n\n')
             f.close()
-            print 'Saved debug filtering information to', fName
+            print('Saved debug filtering information to', fName)
         return lb
 
 class Brancher:
     def branch(self, lb):
         if params.verbosity > 2:
-            print 'trying to branch:', self.__class__
+            print('trying to branch:', self.__class__)
         return self.genBranches(lb)
 
     
@@ -259,7 +259,7 @@ class TreeSearch:
         elif strategy == 'best':
             self.queue = flexiblequeue.Queue('best')
         else:
-            print 'Unknown queue type:', strategy
+            print('Unknown queue type:', strategy)
             sys.exit(8)
 
     # perform a tree search!
@@ -275,13 +275,13 @@ class TreeSearch:
         #
         def updateStatusIfNeeded():
             if self.__class__.nNodes % 50 == 0:
-                print util.TS(), '\tBIOBAB:\t', len(self.queue),
-                print 'nodes \t|UB|:',len(ub.solutions)
+                print(util.TS(), '\tBIOBAB:\t', len(self.queue), end=' ')
+                print('nodes \t|UB|:',len(ub.solutions))
         #
         osbStats = []
         if not wrapped:
-            print util.TS() + '\tstarting bi-objective branch-and-bound (' + \
-                self.strategy + ')'
+            print(util.TS() + '\tstarting bi-objective branch-and-bound (' + \
+                self.strategy + ')')
         self.queue.push(node)
         while not self.queue.empty():
             node = self.queue.pop()
@@ -290,26 +290,26 @@ class TreeSearch:
                 updateStatusIfNeeded()
             elif params.verbosity > 1:
                 prefix = len(node.branchingDecisions) * '+-'
-                print util.TS() + '\t', prefix,
-                print '[f1 <=', str(node.right), '| f2 <=', str(node.top) + ']',
-                print node.branchingDecisions, \
+                print(util.TS() + '\t', prefix, end=' ')
+                print('[f1 <=', str(node.right), '| f2 <=', str(node.top) + ']', end=' ')
+                print(node.branchingDecisions, \
                     '(' + str(len(self.queue)) + ' nodes, |UB| =', \
-                    str(len(ub.solutions)) + ')'
+                    str(len(ub.solutions)) + ')')
             node.applyBranchingDecisions()
             try:
                 lb = bounder.bound(node, ub)
             except util.TimeLimitReachedException as e:
                 if not wrapped:
-                    print e
+                    print(e)
                     return
                 else:
                     raise e
             node.cancelBranchingDecisions()
             #
             if params.verbosity > 2:
-                print
-                print 'LB:', lb
-                print
+                print()
+                print('LB:', lb)
+                print()
             #
             if not lb.isLeaf():
                 if not params.objectiveSpaceBranching:
@@ -332,6 +332,6 @@ class TreeSearch:
                                                    node.depth + 1 ) )
                             break
         if not wrapped:
-            print util.TS() + '\tbi-objective branch-and-bound is over'
+            print(util.TS() + '\tbi-objective branch-and-bound is over')
         if params.verbosity > 0 and not wrapped:
-            print 'stats on OSB:', osbStats
+            print('stats on OSB:', osbStats)

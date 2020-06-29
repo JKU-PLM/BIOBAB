@@ -51,7 +51,7 @@ class IntegerSolution:
                            str(self.vars[x]) + '\n')
         file.close()
         if verbose:
-            print 'stored solution to', fName
+            print('stored solution to', fName)
 
     def storeSolution(self, fName='solution', verbose=False):
         self.storeAsRaw(fName, verbose)

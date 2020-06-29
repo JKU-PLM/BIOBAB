@@ -14,14 +14,14 @@ class EpsilonConstraintFramework:
         # initialisations...
         right = lp.validBoundRight or params.inputData.boundRight()
         top = lp.validBoundTop or params.inputData.boundTop()
-        print util.TS(), '\tStarting epsilon-constraint',
-        print 'with boundRight =', right, 'and boundTop =', top
+        print(util.TS(), '\tStarting epsilon-constraint', end=' ')
+        print('with boundRight =', right, 'and boundTop =', top)
         if singleObj == 1:
-            print '\t\tOptimising z1 first'
+            print('\t\tOptimising z1 first')
         elif singleObj == 2:
-            print '\t\tOptimising z2 first'
+            print('\t\tOptimising z2 first')
         else:
-            print 'Error: invalid objective:', singleObj
+            print('Error: invalid objective:', singleObj)
             sys.exit(22)
         try:
             while True:
@@ -34,20 +34,20 @@ class EpsilonConstraintFramework:
                     z1, z2 = point
                 #
                 if z1 is None:
-                    print util.TS() + '\tepsilon-constraint',
-                    print 'framework is over'
+                    print(util.TS() + '\tepsilon-constraint', end=' ')
+                    print('framework is over')
                     return
                 else:
                     if params.verbosity > 0:
-                        print util.TS() + '\tNew solution:\tz1 =', z1, \
-                                                        '\tz2 =', z2
+                        print(util.TS() + '\tNew solution:\tz1 =', z1, \
+                                                        '\tz2 =', z2)
                     if singleObj == 1:
                         top = z2 - params.inputData.z2Epsilon
                     else:
                         right = z1 - params.inputData.z1Epsilon
         except util.TimeLimitReachedException as e:
-            print e
-        print util.TS() + '\tepsilon-constraint framework is over'        
+            print(e)
+        print(util.TS() + '\tepsilon-constraint framework is over')        
 
 # Bi-directional epsilon constraint framework
 class BDEpsilonConstraintFramework(EpsilonConstraintFramework):
@@ -56,8 +56,8 @@ class BDEpsilonConstraintFramework(EpsilonConstraintFramework):
         right = lp.validBoundRight or params.inputData.boundRight()
         top = lp.validBoundTop or params.inputData.boundTop()
         localRight, localTop = right, top
-        print util.TS(), '\tStarting bi-directional epsilon-constraint',
-        print 'with boundRight =', right, 'and boundTop =', top
+        print(util.TS(), '\tStarting bi-directional epsilon-constraint', end=' ')
+        print('with boundRight =', right, 'and boundTop =', top)
         currentObj = firstObj
         lastFound = None
         try:
@@ -71,14 +71,14 @@ class BDEpsilonConstraintFramework(EpsilonConstraintFramework):
                 if point:
                     z1, z2 = point
                 if lastFound and util.closeEnough(point, lastFound):
-                    print util.TS() + '\tepsilon-constraint',
-                    print 'framework is over'
+                    print(util.TS() + '\tepsilon-constraint', end=' ')
+                    print('framework is over')
                     return
                 else:
                     lastFound = point
                     if params.verbosity > 0:
-                        print util.TS() + '\tNew solution:\tz1 =', z1, \
-                                                        '\tz2 =', z2
+                        print(util.TS() + '\tNew solution:\tz1 =', z1, \
+                                                        '\tz2 =', z2)
                     if currentObj == 1:
                         localTop = z2 - params.inputData.z2Epsilon
                         currentObj = 2
@@ -86,5 +86,5 @@ class BDEpsilonConstraintFramework(EpsilonConstraintFramework):
                         localRight = z1 - params.inputData.z1Epsilon
                         currentObj = 1
         except util.TimeLimitReachedException as e:
-            print e
-        print util.TS() + '\tepsilon-constraint framework is over'        
+            print(e)
+        print(util.TS() + '\tepsilon-constraint framework is over')        

@@ -41,14 +41,14 @@ class BasicLP:
     def showSol(self):
         for var in self.model.getVars():
             if var.getAttr(GRB.Attr.X) > 0:
-                print var.getAttr(GRB.Attr.VarName), var.getAttr(GRB.Attr.X)
+                print(var.getAttr(GRB.Attr.VarName), var.getAttr(GRB.Attr.X))
                 
     def exportModel(self, fName='debug'):
         self.model.update()
         BasicLP.lastSavedModel += 1        
         modelFileName = fName + ('-%04d' % BasicLP.lastSavedModel) + '.lp'
         self.model.write(modelFileName)
-        print 'Exported model to', modelFileName
+        print('Exported model to', modelFileName)
             
     def integerSolution(self):
         for z in self.integerVars:
@@ -123,7 +123,7 @@ class BasicLP:
 
     def feasibleSolution(self, sol):
         # check if non-zeros are allowed
-        for var, value in sol.vars.iteritems():
+        for var, value in sol.vars.items():
             if value > var.getAttr(GRB.Attr.UB):
                 return False
         # check if variables that should be non-zeros actually are non-zero
@@ -136,8 +136,8 @@ class BasicLP:
     
     def solveWeightedSum(self, w1, w2, right, top, upperBound):
         if params.verbosity > 2:
-            print '*** optimising weighted sum:', w1, w2, '\t|\tz1 <=', \
-                right, '\t|\tz2 <=', top
+            print('*** optimising weighted sum:', w1, w2, '\t|\tz1 <=', \
+                right, '\t|\tz2 <=', top)
         # update bounds
         self.updateBounds(right, top)
         # update objective function
@@ -173,10 +173,10 @@ class BasicLP:
         # return newly found point
         if self.model.getAttr('status') == GRB.OPTIMAL:
             if params.verbosity > 3:
-                print self.getNonZeros()
+                print(self.getNonZeros())
             if params.verbosity > 2:
-                print '\tobjective values:', self.z1(), self.z2()
-                print '\tweighted sum:', self.getObjectiveValue()
+                print('\tobjective values:', self.z1(), self.z2())
+                print('\tweighted sum:', self.getObjectiveValue())
             # if it is integer, update upperBound with it
             if self.integerSolution():
                 newSol = params.solutionClass(self)
@@ -202,13 +202,13 @@ class BasicLP:
                 return self.z1(), self.z2()
         elif params.mipCutoff and self.model.getAttr('status') == GRB.CUTOFF:
             if params.verbosity > 2:
-                print '\tcutoff point', cutoffPoint, 'is optimal'
+                print('\tcutoff point', cutoffPoint, 'is optimal')
             return cutoffPoint
         else:
             if self.model.getAttr('status') != GRB.INFEASIBLE and \
                self.model.getAttr('status') != GRB.INF_OR_UNBD:
-                print 'Unexpected status:',
-                print grbvalues.status[self.model.getAttr('status')]
+                print('Unexpected status:', end=' ')
+                print(grbvalues.status[self.model.getAttr('status')])
                 self.exportModel('unexpected')
             return None
 
@@ -233,7 +233,7 @@ class BasicLP:
             return self.lexminWeightedSum(objective, boundRight, boundTop,
                                           upperBound)
         else:
-            print 'Error: unknow method for lexmin:', params.lexminMethod
+            print('Error: unknow method for lexmin:', params.lexminMethod)
             sys.exit(22)
 
     # lexmin computed using a weighted sum
@@ -264,17 +264,17 @@ class BasicLP:
     def getSolutionPoolVectors(self):
         nSolutions = self.model.getAttr('SolCount')
         ub = upperboundset.UpperBoundSet()
-        for n in xrange(nSolutions):
+        for n in range(nSolutions):
             z1, z2 = 0, 0
             variables = {}
             self.model.params.solutionNumber = n
             for var in self.model.getVars():
                 if var.getAttr(GRB.Attr.Xn) > 0:
                     variables[var] = var.getAttr(GRB.Attr.Xn)
-            for i in xrange(self.z1Expr.size()):
+            for i in range(self.z1Expr.size()):
                 z1 += self.z1Expr.getCoeff(i) * \
                       self.z1Expr.getVar(i).getAttr(GRB.Attr.Xn)
-            for i in xrange(self.z2Expr.size()):
+            for i in range(self.z2Expr.size()):
                 z2 += self.z2Expr.getCoeff(i) * \
                       self.z2Expr.getVar(i).getAttr(GRB.Attr.Xn)
             ub.updateWithSolution(params.solutionClass(z1=z1, z2=z2,
@@ -290,7 +290,7 @@ class BasicLP:
         # convert gurobi linear expresion to human readable string
         def exprToString(e):
             r = ''
-            for i in xrange(e.size()):
+            for i in range(e.size()):
                 coeff, var = e.getCoeff(i), e.getVar(i)
                 if coeff != 0:
                     if coeff > 0 and len(r) > 0:
@@ -343,4 +343,4 @@ class BasicLP:
                     f.write(' ' + sanitise(v.getAttr('VarName')))
                 f.write('\n')
             f.write('End\n')
-        print util.TS() + '\t' + 'Converted instance to', fName
+        print(util.TS() + '\t' + 'Converted instance to', fName)

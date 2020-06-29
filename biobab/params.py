@@ -8,7 +8,7 @@ verbosity = 1
 # Parameters for BIOBAB
 # tolerance used to determine if a point is on a given segment
 # in LB set calculation
-onSegmentTolerance = 1e-6
+onSegmentTolerance = 1e-4
 # improve dominance of LB by UB using the fact that feasible integer solutions
 # have objective with integer values only
 integerDominance = True #and False

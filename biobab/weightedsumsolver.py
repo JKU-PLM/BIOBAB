@@ -54,6 +54,11 @@ class WeightedSumNode(biobabnode.Node):
                                 md)
             return lowerboundset.LowerBoundSet( [ s ] )
 
+    # must be defined since nodes are ordered in b&b tree using (score, node)
+    # pairs and sometimes scores are equal 
+    def __lt__(self, other):
+        return id(self) < id(other)
+
 class WeightedSumBounder(treesearch.Bounder):
     def __init__(self, w1, w2):
         self.w1 = w1
@@ -75,10 +80,10 @@ class WeightedSumBounder(treesearch.Bounder):
 class WeightedSumSolver:
     def solve(self, lp, w1, w2, right, top, ub):
         if params.verbosity > 2:
-            print util.TS(),
-            print '*** optimising weighted sum:', w1, w2, '\t|\tz1 <=', \
-                right, '\t|\tz2 <=', top
-            print '\tUB:', ub
+            print(util.TS(), end=' ')
+            print('*** optimising weighted sum:', w1, w2, '\t|\tz1 <=', \
+                right, '\t|\tz2 <=', top)
+            print('\tUB:', ub)
         WeightedSumNode.w1, WeightedSumNode.w2 = w1, w2
         rootNode = WeightedSumNode(lp, right=right, top=top)
         bounder = WeightedSumBounder(w1, w2)
@@ -108,8 +113,8 @@ class WeightedSumSolver:
             ub.updateWithSolution(u)
         #
         if params.verbosity > 2 and best:
-            print '\tobjective values:', best.z1, best.z2
-            print '\tweighted sum:', best.z1 * w1 + best.z2 * w2
+            print('\tobjective values:', best.z1, best.z2)
+            print('\tweighted sum:', best.z1 * w1 + best.z2 * w2)
         # finally, return best solution found
         if best is None:
             return None
@@ -126,8 +131,8 @@ class LexminSolver:
         elif params.lexminMethod == 'ws':
             return self.solveWS(lp, firstObj, right, top, ub)
         else:
-            print 'Error: unknown method for calculating lexmin points:',
-            print params.lexMinMethod
+            print('Error: unknown method for calculating lexmin points:', end=' ')
+            print(params.lexMinMethod)
             sys.exit(22)
         
     def solveLex(self, lp, firstObj, right, top, ub):

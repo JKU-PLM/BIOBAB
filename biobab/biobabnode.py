@@ -78,10 +78,10 @@ class Node:
         metaData[e2] = lowerboundset.LBMetaData(self.lp)
         params.mipCutoff = mc
         if params.verbosity > 2:
-            print
-            print '*** extreme points:'
-            print '\te1 =', e1
-            print '\te2 =', e2
+            print()
+            print('*** extreme points:')
+            print('\te1 =', e1)
+            print('\te2 =', e2)
         C.append((e1, e2))
         # main loop: process segments in the stack until it's empty
         while len(C) > 0:
@@ -90,17 +90,17 @@ class Node:
             if util.closeEnough(c1, c2):
                 c2 = c1
             if params.verbosity > 2:
-                print
-                print 'processing:', c1, c2
+                print()
+                print('processing:', c1, c2)
             if c1[0] > c2[0]:
-                print 'Error: inconsistent segment:', c1, c2
-                print util.closeEnough(c1, c2)
+                print('Error: inconsistent segment:', c1, c2)
+                print(util.closeEnough(c1, c2))
                 sys.exit(8)
             # if these points already define a valid LB segment we don't need
             # to process this segment further
             if c1 == c2 or (params.lbLifting and definesValidLB(c1, c2)):
                 if params.verbosity > 2:
-                    print 'defines a valid LB!'
+                    print('defines a valid LB!')
                 addIfMustSub(c1, c2, E, metaData)
                 continue
             # compute the new weights
@@ -111,15 +111,15 @@ class Node:
                                           self.right, self.top,
                                           upperBound)
             if params.verbosity > 2:
-                print'\tbeta:', beta
-                print'\talpha:', alpha
+                print('\tbeta:', beta)
+                print('\talpha:', alpha)
                 if not c3 is None:
-                    print '\tscalarised c1:', scalar(c1, beta, alpha)
-                    print '\tscalarised c2:', scalar(c2, beta, alpha)
-                    print '\tscalarised c3:', scalar(c3, beta, alpha)
+                    print('\tscalarised c1:', scalar(c1, beta, alpha))
+                    print('\tscalarised c2:', scalar(c2, beta, alpha))
+                    print('\tscalarised c3:', scalar(c3, beta, alpha))
                 else:
-                    print '\t/!\\ No feasible solution,',
-                    print 'this should not occur unless we are solving a MIP'
+                    print('\t/!\\ No feasible solution,', end=' ')
+                    print('this should not occur unless we are solving a MIP')
             if c3 is None:
                 pass
             # is this new point on the segment?
@@ -127,7 +127,7 @@ class Node:
                                scalar(c3, beta, alpha)):
                 addIfMustSub(c1, c2, E, metaData)
                 if params.verbosity > 2:
-                    print '\t--> segment in hull:', (c1, c2)
+                    print('\t--> segment in hull:', (c1, c2))
             else:
                 # otherwise: two new segments must be processed
                 # when stacking them in this order E is automatically sorted
@@ -135,7 +135,7 @@ class Node:
                 C.append((c3, c2))
                 C.append((c1, c3))
                 if params.verbosity > 2:
-                    print '\t--> new point:', c3
+                    print('\t--> new point:', c3)
                 metaData[c3] = lowerboundset.LBMetaData(self.lp)
         return lowerboundset.LowerBoundSet(E)
 
@@ -144,6 +144,6 @@ class Node:
             decision.apply(self)
 
     def cancelBranchingDecisions(self):
-        for i in xrange(len(self.branchingDecisions)):
+        for i in range(len(self.branchingDecisions)):
             self.branchingDecisions[len(self.branchingDecisions) - 1 - i].\
                 cancel(self)

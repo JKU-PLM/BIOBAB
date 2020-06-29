@@ -3,11 +3,14 @@
 import sys
 import string
 import time
+import os
 
-from biobab import biobabnode, upperboundset, treesearch
-from biobab import epsilonconstraintframework
-from biobab import balancedboxmethod
-from biobab import util, params
+sys.path.append(os.path.join(os.getcwd(), 'biobab'))
+
+import biobabnode, upperboundset, treesearch
+import epsilonconstraintframework
+import balancedboxmethod
+import util, params
 
 import cliparser
 
@@ -24,16 +27,16 @@ def main():
     try:
         d = params.instanceClass(params.inputFile)
     except IOError:
-        print 'Error: cannot read file', params.inputFile
+        print('Error: cannot read file', params.inputFile)
         sys.exit(0)
     params.inputData = d
-    print util.TS() + '\t' + 'read data'
-    util.ticksAtStart = time.clock()
+    print(util.TS() + '\t' + 'read data')
+    util.ticksAtStart = time.process_time()
     # construct model
     relaxed = params.useLinearRelaxation
     m = params.modelClass(d, relaxed=relaxed)
     params.model = m
-    print util.TS() + '\t' + 'constructed model'
+    print(util.TS() + '\t' + 'constructed model')
     # initial valid objective bounds
     boundRight = params.boundRight or m.validBoundRight
     boundTop = params.boundTop or m.validBoundTop
@@ -46,7 +49,7 @@ def main():
     atexit.register(ub.storeSolutions, params.outputFilePrefix)
     #
     util.dumpParams()
-    print util.TS() + '\tstarting optimisation'
+    print(util.TS() + '\tstarting optimisation')
     # algorithm-dependent section
     if params.algorithm == 'biobab':
         # construct and run biobab
@@ -71,14 +74,14 @@ def main():
     elif params.algorithm == 'root':
         rootNode = nodeClass(m, right=boundRight, top=boundTop)
         lb = rootNode.lowerBound(ub)
-        print lb
+        print(lb)
         lb.storePoints(params.outputFilePrefix + '-lb.txt')
     else:
-        print 'Error: unknown algorithm:', algorithm
+        print('Error: unknown algorithm:', algorithm)
         sys.exit(1)
 
-    print 'Solved', params.modelClass.nLPs, 'LPs in total'
-    print 'Solved', treesearch.TreeSearch.nNodes, 'nodes in total'
+    print('Solved', params.modelClass.nLPs, 'LPs in total')
+    print('Solved', treesearch.TreeSearch.nNodes, 'nodes in total')
     
 if __name__ == '__main__':
     main()

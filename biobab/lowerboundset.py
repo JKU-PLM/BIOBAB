@@ -1,5 +1,6 @@
 import params
 import segment
+from functools import reduce
 
 class LowerBoundSet:
     def __init__(self, segments):
@@ -17,7 +18,7 @@ class LowerBoundSet:
         for s in self.segments:
             self.metaDataForPoint[s.p1] = s.metaData1
             self.metaDataForPoint[s.p2] = s.metaData2
-        self.metaData = lambda: self.metaDataForPoint.itervalues()
+        self.metaData = lambda: iter(self.metaDataForPoint.values())
     
     # filter this LB set with an UB set
     def filter(self, ubSet):
@@ -53,7 +54,7 @@ class LowerBoundSet:
             f.write( str(self.segments[-1].p2[0]) + '\t' + \
                          str(self.segments[-1].p2[1])  + '\n' )
         f.close()
-        print 'Stored LB set to', fName
+        print('Stored LB set to', fName)
 
     # returns right- and top-bounds for discontinuous regions of this LB set
     def discontinuousRegions(self):
@@ -95,8 +96,8 @@ class LowerBoundSet:
                         self.varValues[x] = [ v ]
             if params.verbosity > 4:
                 for x in self.varValues:
-                    print x, self.varValues[x]
-                print
+                    print(x, self.varValues[x])
+                print()
         return self.varValues
     
     def isLeaf(self):
@@ -134,7 +135,7 @@ class LowerBoundSet:
                 segments[-1].right = r[0]
                 lb = LowerBoundSet(segments)
                 lb.metaDataForPoint = metaDataForPoint
-                lb.metaData = lambda: metaDataForPoint.itervalues()
+                lb.metaData = lambda: iter(metaDataForPoint.values())
                 result.append(lb)
             return result
                 

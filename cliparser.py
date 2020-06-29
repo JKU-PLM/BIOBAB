@@ -1,6 +1,6 @@
 import argparse
 
-from biobab import params
+import params
 
 def parse():
     parser = argparse.ArgumentParser()
@@ -108,7 +108,7 @@ def parse():
         try:
             exec('parser.set_defaults(' + i + '=params.' + i + ')')
         except Exception as e:
-            print 'Error while reading default parameters:', e
+            print('Error while reading default parameters:', e)
             sys.exit(9)
     
     args = parser.parse_args()
@@ -116,7 +116,7 @@ def parse():
 
 def setParams(args):
     paramsAndValues = vars(args)
-    for key, value in paramsAndValues.iteritems():
+    for key, value in paramsAndValues.items():
         t = 'params.' + key + ' = ' + repr(value)
         # print t
         try:
