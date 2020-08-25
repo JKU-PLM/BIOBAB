@@ -1,8 +1,6 @@
 This is the code used in "Branch-and-Bound for Bi-objective Integer Programming" by Sophie N. Parragh and Fabien Tricoire (2019) which can be found at https://doi.org/10.1287/ijoc.2018.0856
 
-The code relies on Gurobi. For this reason:
-- a working install of Gurobi is required
-- The code is in Python 2
+The code relies on Gurobi. For this reason, a working install of Gurobi is required.
 
 Run './main.py -h' to see a list of command line parameters.
 If this does not work, run 'gurobi.sh ./main.py -h'
